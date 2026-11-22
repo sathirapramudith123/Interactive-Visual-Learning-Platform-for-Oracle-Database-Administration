@@ -7,8 +7,13 @@ export interface Lesson { t: string; s: string; f: [number, number, number, numb
 const N = (id: string, x: number, y: number, w: number, h: number, a: string, b: string, k: Kind): NodeDef => ({ id, x, y, w, h, a, b, k });
 // R lays boxes out in one row automatically. C chains them with lines.
 const R = (a: [string, string, string, Kind][]): NodeDef[] => {
-  const n = a.length, w = Math.min(130, Math.floor((660 - (n - 1) * 18) / n)), gap = (660 - n * w) / (n - 1 || 1);
-  return a.map((v, i) => N(v[0], 10 + i * (w + gap), 95, w, 60, v[1], v[2], v[3]));
+  const n = a.length, per = Math.min(n, 3), w = 190, h = 84, gap = per > 1 ? (640 - per * w) / (per - 1) : 0;
+  const rows = Math.ceil(n / per), top = rows === 1 ? 83 : 20;
+  return a.map((v, i) => {
+    const r = Math.floor(i / per), c0 = i % per, c = r % 2 ? per - 1 - c0 : c0;
+    const x = per === 1 ? 245 : 20 + c * (w + gap);
+    return N(v[0], x, top + r * 120, w, h, v[1], v[2], v[3]);
+  });
 };
 const C = (ids: string[]): [string, string][] => ids.slice(1).map((x, i) => [ids[i], x]);
 
