@@ -1,6 +1,6 @@
 import "./style.css";
-import { initLab } from "./lab";  
 import { LES, type NodeDef, type Pt } from "./lessons";
+import { initLab } from "./lab";
 
 type XY = [number, number];
 const $ = <T extends Element = HTMLElement>(id: string) => document.getElementById(id) as unknown as T;
@@ -20,7 +20,7 @@ const ctr = (id: string): XY => { const p = pos[id]; return [p.x + p.w / 2, p.y 
 const P = (p: Pt): XY => (typeof p === "string" ? ctr(p) : p);
 
 // point on the border of a box, facing a target point
-function clip(id: string, to: XY, gap = 5): XY {
+function clip(id: string, to: XY, gap = 6): XY {
   const n = pos[id], c = ctr(id), dx = to[0] - c[0], dy = to[1] - c[1];
   const t = Math.min(dx ? (n.w / 2 + gap) / Math.abs(dx) : Infinity, dy ? (n.h / 2 + gap) / Math.abs(dy) : Infinity);
   return [c[0] + dx * t, c[1] + dy * t];
@@ -32,6 +32,7 @@ function seg(a: Pt, b: Pt): [XY, XY] {
 
 function drawNode(g: Element, n: NodeDef): void {
   const fill = `var(--${n.k})`, { x, y, w, h } = n, d = 10;
+  const fs = Math.min(16, w / 9.2);
   let cy = y + h / 2;
   if (n.k === "file") {
     el("path", { class: "bs", fill, d: `M${x} ${y + d} L${x} ${y + h - d} A${w / 2} ${d} 0 0 0 ${x + w} ${y + h - d} L${x + w} ${y + d} Z` }, g);
@@ -39,10 +40,23 @@ function drawNode(g: Element, n: NodeDef): void {
     el("ellipse", { fill: "#fff", "fill-opacity": 0.35, cx: x + w / 2, cy: y + d, rx: w / 2, ry: d }, g);
     cy += 6;
   } else {
-    el("rect", { class: "bs", fill, x, y, width: w, height: h, rx: 8 }, g);
+    el("rect", { class: "bs", fill, x, y, width: w, height: h, rx: 10 }, g);
   }
-  el("text", { x: x + w / 2, y: cy - 5, "text-anchor": "middle", "font-size": 13, "font-weight": 700 }, g).textContent = n.a;
-  el("text", { x: x + w / 2, y: cy + 13, "text-anchor": "middle", "font-size": 10.5 }, g).textContent = n.b;
+  el("text", { x: x + w / 2, y: cy - 4, "text-anchor": "middle", "font-size": fs, "font-weight": 700 }, g).textContent = n.a;
+  el("text", { x: x + w / 2, y: cy + fs + 2, "text-anchor": "middle", "font-size": fs * 0.78 }, g).textContent = n.b;
+}
+
+// zoom the picture to fit what is drawn, so it fills the panel
+function fit(s: Element): void {
+  const L = LES[li], xs: number[] = [], ys: number[] = [];
+  L.n.forEach(n => { xs.push(n.x, n.x + n.w + 6); ys.push(n.y, n.y + n.h + 6); });
+  L.f.forEach(f => { xs.push(f[0], f[0] + f[2]); ys.push(f[1], f[1] + f[3]); });
+  L.st.forEach(st => st.m?.forEach(p => { if (typeof p !== "string") { xs.push(p[0]); ys.push(p[1]); } }));
+  const pad = 20;
+  let x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+  const minH = 240;
+  if (y1 - y0 < minH) { const c = (y0 + y1) / 2; y0 = c - minH / 2; y1 = c + minH / 2; }
+  s.setAttribute("viewBox", `${x0} ${y0} ${x1 - x0} ${y1 - y0}`);
 }
 
 function build(): void {
@@ -54,6 +68,7 @@ function build(): void {
     '</defs>';
   pos = {}; route = [];
   L.n.forEach(n => (pos[n.id] = n));
+  fit(s);
   L.f.forEach(f => {
     el("rect", { x: f[0], y: f[1], width: f[2], height: f[3], rx: 12, class: "fr" }, s);
     el("text", { x: f[0] + 10, y: f[1] + 16, class: "fl" }, s).textContent = f[4];
@@ -64,7 +79,7 @@ function build(): void {
   });
   el("g", { id: "hl" }, s);
   L.n.forEach(n => drawNode(el("g", { class: "nd", id: "n_" + n.id }, s), n));
-  el("circle", { id: "pk", r: 8, cx: 0, cy: 0, opacity: 0 }, s);
+  el("circle", { id: "pk", r: 9, cx: 0, cy: 0, opacity: 0 }, s);
 
   $("ti").textContent = L.t; $("su").textContent = L.s;
   const d = $("dt"); d.innerHTML = "";
@@ -88,7 +103,7 @@ function build(): void {
 function go(i: number): void {
   const L = LES[li], S = L.st[i];
   si = i;
-  document.querySelectorAll(".nd").forEach(g => g.setAttribute("class", "nd"));
+  document.querySelectorAll("#sv .nd").forEach(g => g.setAttribute("class", "nd"));
   S.a?.forEach(id => $("n_" + id).classList.add("on"));
   S.b?.forEach(id => $("n_" + id).classList.add("bad"));
   $("sn").textContent = `Step ${i + 1} of ${L.st.length}`;
@@ -145,9 +160,8 @@ $("pl").onclick = () => {
   tm = window.setInterval(() => { if (si >= LES[li].st.length - 1) stop(); else go(si + 1); }, 4200);
 };
 $("th").onclick = () => {
-  const r = document.documentElement, d = r.getAttribute("data-theme");
-  const dark = d ? d === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-  r.setAttribute("data-theme", dark ? "light" : "dark");
+  const r = document.documentElement;
+  r.setAttribute("data-theme", r.getAttribute("data-theme") === "dark" ? "light" : "dark");
 };
 document.addEventListener("keydown", e => {
   if (e.key === "ArrowRight") $("nx").click();

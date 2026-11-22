@@ -1,6 +1,5 @@
 :root{--bg:#f7f2e6;--card:#fffdf6;--ink:#2a2723;--mut:#7b7567;--line:#d8cfba;--acc:#cfe8a8;--mem:#cfe3f7;--file:#e2d7f5;--user:#fbdcb8;--proc:#cbebd5;--hot:#e0632f;--bad:#f6c4b8;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1a17;--card:#262320;--ink:#f1ebdc;--mut:#a39c8b;--line:#403b33;--acc:#4a6a22;--mem:#27425e;--file:#40336a;--user:#6b4620;--proc:#255a3b;--hot:#ff8a55;--bad:#7a3524}}
 :root[data-theme="dark"]{--bg:#1c1a17;--card:#262320;--ink:#f1ebdc;--mut:#a39c8b;--line:#403b33;--acc:#4a6a22;--mem:#27425e;--file:#40336a;--user:#6b4620;--proc:#255a3b;--hot:#ff8a55;--bad:#7a3524}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 "JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
@@ -38,8 +37,6 @@ svg{width:100%;height:auto;display:block}
 .rt{stroke:var(--hot);stroke-width:4;fill:none}
 #pk{fill:var(--hot);stroke:var(--ink);stroke-width:2}
 
-@media (max-width:900px){.app{grid-template-columns:1fr}.side{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.side h3{width:100%}.lsn{width:auto;margin:0}}
-
 /* Virtual lab: desktop screen */
 .lab{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:linear-gradient(135deg,#2b3a55,#1f2a3d 60%,#3a2f4f);color:#eee}
 .lab[hidden]{display:none}
@@ -70,4 +67,10 @@ svg{width:100%;height:auto;display:block}
 .wd svg{width:calc(100% - 24px);margin:6px 12px 12px}
 #ldot{fill:var(--hot);stroke:var(--ink);stroke-width:2}
 .xm{fill:var(--hot);font-size:30px;font-weight:700;text-anchor:middle}
-@media (max-width:900px){.desk{grid-template-columns:1fr;overflow:auto}.win{min-height:340px}}
+
+@media (max-width:900px){.app{grid-template-columns:1fr}.side{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.side h3{width:100%}.lsn{width:auto;margin:0}.desk{grid-template-columns:1fr;overflow:auto}.win{min-height:340px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+#sv .nd{opacity:.92}
+#sv .nd.on{opacity:1}
+.nd text{fill:var(--ink);font-family:inherit;paint-order:stroke}
