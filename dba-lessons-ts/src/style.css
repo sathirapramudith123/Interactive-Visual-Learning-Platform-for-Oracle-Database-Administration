@@ -27,9 +27,11 @@ svg{width:100%;height:auto;display:block}
 
 /* 2D diagram */
 .nd rect,.nd path,.nd ellipse{stroke:var(--ink);stroke-width:2;transition:all .25s}
-.nd text{fill:var(--ink);font-family:inherit}
+.nd text{fill:var(--ink);font-family:inherit;paint-order:stroke}
 .nd{opacity:.6;transition:opacity .25s;filter:drop-shadow(4px 5px 0 rgba(0,0,0,.2))}
 .nd.on{opacity:1}
+#sv .nd{opacity:.92}
+#sv .nd.on{opacity:1}
 .nd.on rect,.nd.on path,.nd.on ellipse{stroke-width:3.5}
 .nd.bad .bs{fill:var(--bad)!important;stroke:var(--hot)}
 .fr{fill:none;stroke:var(--mut);stroke-width:1.5;stroke-dasharray:6 5}.fl{fill:var(--mut);font-size:11px;font-weight:700}
@@ -68,9 +70,10 @@ svg{width:100%;height:auto;display:block}
 #ldot{fill:var(--hot);stroke:var(--ink);stroke-width:2}
 .xm{fill:var(--hot);font-size:30px;font-weight:700;text-anchor:middle}
 
-@media (max-width:900px){.app{grid-template-columns:1fr}.side{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.side h3{width:100%}.lsn{width:auto;margin:0}.desk{grid-template-columns:1fr;overflow:auto}.win{min-height:340px}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* Lab: persistent connection line */
+.ses{fill:none;stroke:#3fa34d;stroke-width:6;stroke-linejoin:round;stroke-dasharray:12 8;animation:flow .7s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-20}}
+.cap{fill:#3fa34d;font-size:12px;font-weight:700}
 
-#sv .nd{opacity:.92}
-#sv .nd.on{opacity:1}
-.nd text{fill:var(--ink);font-family:inherit;paint-order:stroke}
+@media (max-width:900px){.app{grid-template-columns:1fr}.side{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.side h3{width:100%}.lsn{width:auto;margin:0}.desk{grid-template-columns:1fr;overflow:auto}.win{min-height:340px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.ses{animation:none}}

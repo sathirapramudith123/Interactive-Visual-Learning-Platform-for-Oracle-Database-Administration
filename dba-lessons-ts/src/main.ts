@@ -53,7 +53,8 @@ function fit(s: Element): void {
   L.f.forEach(f => { xs.push(f[0], f[0] + f[2]); ys.push(f[1], f[1] + f[3]); });
   L.st.forEach(st => st.m?.forEach(p => { if (typeof p !== "string") { xs.push(p[0]); ys.push(p[1]); } }));
   const pad = 20;
-  let x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+  const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad;
+  let y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
   const minH = 240;
   if (y1 - y0 < minH) { const c = (y0 + y1) / 2; y0 = c - minH / 2; y1 = c + minH / 2; }
   s.setAttribute("viewBox", `${x0} ${y0} ${x1 - x0} ${y1 - y0}`);
