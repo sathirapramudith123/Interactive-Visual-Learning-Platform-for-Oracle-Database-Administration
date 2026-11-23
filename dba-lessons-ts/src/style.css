@@ -10,11 +10,10 @@ button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
 button:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
 button.go{background:var(--acc);font-weight:700}
 button:disabled{opacity:.45;cursor:default}
-.app{display:grid;grid-template-columns:210px 1fr 300px;gap:16px;padding:16px;max-width:1280px;margin:auto}
+.app{display:grid;grid-template-columns:230px 1fr 300px;gap:16px;padding:16px;max-width:1300px;margin:auto}
 .side,.stage,.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
 .side h3{margin:0 0 8px;font-size:13px;color:var(--mut)}
 .lsn{display:block;width:100%;text-align:left;margin:0 0 8px;box-shadow:none;border:1px solid var(--line)}
-.lsn[aria-current="true"]{background:var(--acc);border:2px solid var(--ink);font-weight:700}
 h1{font-size:24px;margin:0 0 2px}.sub{color:var(--mut);margin:0 0 10px}
 .tools{display:flex;gap:8px;justify-content:flex-end;margin-bottom:6px}
 svg{width:100%;height:auto;display:block}
@@ -24,6 +23,15 @@ svg{width:100%;height:auto;display:block}
 .panel h2{font-size:18px;margin:6px 0}.key{background:var(--file);border:1px solid var(--line);border-radius:8px;padding:10px;margin:12px 0}
 .nav{display:flex;gap:8px;margin-top:14px}.nav button{flex:1}
 .step{color:var(--mut);font-size:12px}
+
+/* Sidebar tree: lectures and sub-lessons */
+.gh{display:flex;justify-content:space-between;gap:8px;font-weight:700}
+.gh .cnt{color:var(--mut);font-weight:400;font-size:12px}
+.gh[aria-expanded="true"]{background:var(--card);border:2px solid var(--ink)}
+.subs{margin:-2px 0 10px 10px;padding-left:10px;border-left:2px solid var(--line)}
+.sl{display:block;width:100%;text-align:left;margin:0 0 6px;box-shadow:none;border:1px solid var(--line);font-size:13px;padding:6px 10px}
+.sl[aria-current="true"]{background:var(--acc);border:2px solid var(--ink);font-weight:700}
+.sl.done::after{content:" \2713";color:#3fa34d;font-weight:700}
 
 /* 2D diagram */
 .nd rect,.nd path,.nd ellipse{stroke:var(--ink);stroke-width:2;transition:all .25s}
@@ -75,5 +83,5 @@ svg{width:100%;height:auto;display:block}
 @keyframes flow{to{stroke-dashoffset:-20}}
 .cap{fill:#3fa34d;font-size:12px;font-weight:700}
 
-@media (max-width:900px){.app{grid-template-columns:1fr}.side{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.side h3{width:100%}.lsn{width:auto;margin:0}.desk{grid-template-columns:1fr;overflow:auto}.win{min-height:340px}}
+@media (max-width:900px){.app{grid-template-columns:1fr}.desk{grid-template-columns:1fr;overflow:auto}.win{min-height:340px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}.ses{animation:none}}

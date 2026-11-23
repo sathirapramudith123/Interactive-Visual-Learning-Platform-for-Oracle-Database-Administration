@@ -1,14 +1,22 @@
 import "./style.css";
-import { LES, type NodeDef, type Pt } from "./lessons";
+import { LECS, type Lesson, type NodeDef, type Pt } from "./lessons";
 import { initLab } from "./lab";
 
 type XY = [number, number];
 const $ = <T extends Element = HTMLElement>(id: string) => document.getElementById(id) as unknown as T;
 const NS = "http://www.w3.org/2000/svg";
-let li = 0, si = 0;
+let gi = 0, li = 0, si = 0;
 let tm: number | undefined;
 let pos: Record<string, NodeDef> = {};
 let route: XY[] = [], cum: number[] = [], total = 1, t0 = 0;
+const cur = (): Lesson => LECS[gi].subs[li];
+
+// progress is saved in the browser
+const KEY = "dba-done";
+const done = new Set<string>();
+try { (JSON.parse(localStorage.getItem(KEY) || "[]") as string[]).forEach(k => done.add(k)); } catch { /* ignore */ }
+const save = (): void => { try { localStorage.setItem(KEY, JSON.stringify([...done])); } catch { /* ignore */ } };
+const openG = new Set<number>([0]);
 
 function el(n: string, a: Record<string, string | number>, p?: Element): Element {
   const e = document.createElementNS(NS, n);
@@ -48,7 +56,7 @@ function drawNode(g: Element, n: NodeDef): void {
 
 // zoom the picture to fit what is drawn, so it fills the panel
 function fit(s: Element): void {
-  const L = LES[li], xs: number[] = [], ys: number[] = [];
+  const L = cur(), xs: number[] = [], ys: number[] = [];
   L.n.forEach(n => { xs.push(n.x, n.x + n.w + 6); ys.push(n.y, n.y + n.h + 6); });
   L.f.forEach(f => { xs.push(f[0], f[0] + f[2]); ys.push(f[1], f[1] + f[3]); });
   L.st.forEach(st => st.m?.forEach(p => { if (typeof p !== "string") { xs.push(p[0]); ys.push(p[1]); } }));
@@ -60,8 +68,36 @@ function fit(s: Element): void {
   s.setAttribute("viewBox", `${x0} ${y0} ${x1 - x0} ${y1 - y0}`);
 }
 
+// sidebar tree: lectures that open to show their sub-lessons
+function side(): void {
+  const ls = $("ls"); ls.innerHTML = "";
+  LECS.forEach((lec, g) => {
+    const dn = lec.subs.filter((_, k) => done.has(g + "-" + k)).length;
+    const h = document.createElement("button");
+    h.className = "lsn gh";
+    h.setAttribute("aria-expanded", String(openG.has(g)));
+    const a = document.createElement("span"); a.textContent = lec.t;
+    const c = document.createElement("span"); c.className = "cnt"; c.textContent = `${dn}/${lec.subs.length}`;
+    h.append(a, c);
+    h.onclick = () => { if (openG.has(g)) openG.delete(g); else openG.add(g); side(); };
+    ls.appendChild(h);
+    if (openG.has(g)) {
+      const box = document.createElement("div"); box.className = "subs";
+      lec.subs.forEach((sub, k) => {
+        const b = document.createElement("button");
+        b.className = "sl" + (done.has(g + "-" + k) ? " done" : "");
+        b.textContent = sub.t;
+        b.setAttribute("aria-current", String(g === gi && k === li));
+        b.onclick = () => { stop(); gi = g; li = k; build(); go(0); };
+        box.appendChild(b);
+      });
+      ls.appendChild(box);
+    }
+  });
+}
+
 function build(): void {
-  const L = LES[li], s = $<SVGSVGElement>("sv");
+  const L = cur(), s = $<SVGSVGElement>("sv");
   s.innerHTML =
     '<defs>' +
     '<marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9z" style="fill:var(--mut)"/></marker>' +
@@ -82,7 +118,7 @@ function build(): void {
   L.n.forEach(n => drawNode(el("g", { class: "nd", id: "n_" + n.id }, s), n));
   el("circle", { id: "pk", r: 9, cx: 0, cy: 0, opacity: 0 }, s);
 
-  $("ti").textContent = L.t; $("su").textContent = L.s;
+  $("ti").textContent = L.t; $("su").textContent = `${LECS[gi].t} \u00B7 ${L.s}`;
   const d = $("dt"); d.innerHTML = "";
   L.st.forEach((x, i) => {
     const b = document.createElement("button");
@@ -91,18 +127,12 @@ function build(): void {
     b.onclick = () => { stop(); go(i); };
     d.appendChild(b);
   });
-  const ls = $("ls"); ls.innerHTML = "";
-  LES.forEach((x, i) => {
-    const b = document.createElement("button");
-    b.className = "lsn"; b.textContent = x.t;
-    b.setAttribute("aria-current", String(i === li));
-    b.onclick = () => { stop(); li = i; build(); go(0); };
-    ls.appendChild(b);
-  });
+  openG.add(gi);
+  side();
 }
 
 function go(i: number): void {
-  const L = LES[li], S = L.st[i];
+  const L = cur(), S = L.st[i];
   si = i;
   document.querySelectorAll("#sv .nd").forEach(g => g.setAttribute("class", "nd"));
   S.a?.forEach(id => $("n_" + id).classList.add("on"));
@@ -111,7 +141,13 @@ function go(i: number): void {
   $("sh").textContent = S.h; $("sp").textContent = S.p; $("sk").textContent = S.k;
   L.st.forEach((_, j) => { $("d" + j).className = "dot" + (j === i ? " cur" : j < i ? " done" : ""); });
   $<HTMLButtonElement>("bk").disabled = i === 0;
-  $("nx").textContent = i === L.st.length - 1 ? "Replay lesson" : "Next";
+  const last = i === L.st.length - 1;
+  const hasNext = li < LECS[gi].subs.length - 1 || gi < LECS.length - 1;
+  $("nx").textContent = !last ? "Next" : hasNext ? "Next lesson" : "Replay lesson";
+  if (last) {
+    const k = gi + "-" + li;
+    if (!done.has(k)) { done.add(k); save(); side(); }
+  }
   move(S.m);
 }
 
@@ -151,14 +187,26 @@ function frame(now: number): void {
 
 function stop(): void { clearInterval(tm); tm = undefined; $("pl").textContent = "Play"; }
 
-$("nx").onclick = () => { stop(); go(si >= LES[li].st.length - 1 ? 0 : si + 1); };
+// move to the next sub-lesson (and the next lecture after the last sub-lesson)
+function nextLesson(): void {
+  if (li < LECS[gi].subs.length - 1) li++;
+  else if (gi < LECS.length - 1) { gi++; li = 0; }
+  else { go(0); return; }
+  build(); go(0);
+}
+
+$("nx").onclick = () => {
+  stop();
+  const L = cur();
+  if (si < L.st.length - 1) go(si + 1); else nextLesson();
+};
 $("bk").onclick = () => { stop(); if (si > 0) go(si - 1); };
 $("rp").onclick = () => { stop(); go(0); };
 $("pl").onclick = () => {
   if (tm) { stop(); return; }
   $("pl").textContent = "Pause";
-  if (si >= LES[li].st.length - 1) go(0);
-  tm = window.setInterval(() => { if (si >= LES[li].st.length - 1) stop(); else go(si + 1); }, 4200);
+  if (si >= cur().st.length - 1) go(0);
+  tm = window.setInterval(() => { if (si >= cur().st.length - 1) stop(); else go(si + 1); }, 4200);
 };
 $("th").onclick = () => {
   const r = document.documentElement;
