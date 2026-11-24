@@ -2,38 +2,72 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>DBA Explorer</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <header class="top">
-  <div class="brand"><div class="logo">&#9635;</div><div><h1>DBA EXPLORER</h1><p>LEARN HOW ORACLE WORKS</p></div></div>
-  <div class="lecs"><span class="cap">LECTURE</span><div id="chips"></div></div>
+  <div class="brand"><div class="logo">DB</div><div><h1>DBA Explorer</h1><p>Learn how Oracle works</p></div></div>
+  <div class="tabs" role="tablist">
+    <button id="tlearn" role="tab" aria-selected="true">Learn</button>
+    <button id="tprac" role="tab" aria-selected="false">Practice</button>
+    <button id="labbtn">Lab</button>
+  </div>
+  <button id="th" aria-label="Switch between light and dark theme">Dark mode</button>
 </header>
+
 <div class="grid">
-  <nav class="box side"><h2>IT4040 LESSONS</h2><div id="ls"></div></nav>
+  <nav class="card side"><h2>IT4040 lessons</h2><div id="ls"></div></nav>
+
   <main class="mid">
-    <section class="box scenebox">
-      <div class="tabs"><b id="ti"></b><span id="su"></span></div>
-      <div id="scene" class="scene" aria-label="3D diagram of the lesson"></div>
+    <section class="card scenebox">
+      <div class="ttl"><b id="ti"></b><span id="su"></span></div>
+      <svg id="sv" viewBox="0 0 680 250" role="img" aria-label="Diagram of the lesson"></svg>
     </section>
-    <section class="box flow">
+
+    <section class="card flow" id="flow">
       <div class="fbar">
-        <h2>EVENT FLOW</h2>
+        <h2>Event flow</h2>
         <div class="ctl">
           <select id="spd" aria-label="Speed"><option value="0.5">0.5x</option><option value="1" selected>1x</option><option value="2">2x</option><option value="3">3x</option></select>
-          <button id="prv" aria-label="Previous step">&lsaquo;</button>
-          <button id="play" class="pri">PAUSE</button>
-          <button id="rep">REPLAY</button>
-          <button id="stp">STEP</button>
-          <button id="rst">RESET</button>
+          <button id="prv" aria-label="Previous step">&lsaquo; Back</button>
+          <button id="play" class="go">Pause</button>
+          <button id="rep">Replay</button>
+          <button id="stp">Step</button>
+          <button id="rst">Reset</button>
         </div>
       </div>
       <div class="twrap" id="twrap">
-        <table class="ft"><thead><tr><th>NO.</th><th>TIME</th><th>FROM</th><th>TO</th><th>STEP</th><th>INFO</th></tr></thead><tbody id="tb"></tbody></table>
+        <table class="ft"><thead><tr><th>No.</th><th>Time</th><th>From</th><th>To</th><th>Step</th><th>Info</th></tr></thead><tbody id="tb"></tbody></table>
       </div>
     </section>
+
+    <section class="card sim" id="simbox" hidden>
+      <div class="simbar"><b>Practice</b><span id="shud"></span><button id="sreset">Reset</button></div>
+      <div class="sacts" id="sacts"></div>
+      <div class="slog" id="slog" aria-live="polite"></div>
+    </section>
   </main>
-  <aside class="box sum"><h2>LESSON SUMMARY</h2><div id="pbody"></div></aside>
+
+  <aside class="card sum" id="pbody"></aside>
 </div>
+
+<section class="lab" id="lab" hidden>
+  <div class="dbar"><span><b>Oracle Linux 8</b> &middot; virtual machine</span><span id="lbadge"></span><button id="labclose">Close (Esc)</button></div>
+  <div class="desk">
+    <div class="win wt">
+      <div class="wbar"><i></i><i></i><i></i><span>oracle@dbserver: ~</span></div>
+      <div class="chips" id="chips"></div>
+      <div class="term" id="term" aria-live="polite"></div>
+      <form id="lf"><label>SQL&gt; <input id="cmd" autocomplete="off" spellcheck="false" aria-label="Type a command"></label></form>
+    </div>
+    <div class="win wd">
+      <div class="wbar"><i></i><i></i><i></i><span>Oracle server (live view)</span></div>
+      <div class="states" id="lsts"></div>
+      <p class="step" id="linfo"></p>
+      <svg id="lsv" viewBox="0 0 420 300" role="img" aria-label="Live view of the Oracle server"></svg>
+    </div>
+  </div>
+</section>
+
 <script type="module" src="/src/main.ts"></script>
 </body></html>
