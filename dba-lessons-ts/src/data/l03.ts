@@ -1,5 +1,5 @@
 import type { Item } from "../types";
-import { lesson } from "./build";
+import { lesson } from "./build.js";
 
 export const l03: Item[] = [
   lesson("Lecture 3 · Installation", "Installing Oracle", "Plan, prepare, install, configure", "CORE", 3,

@@ -1,5 +1,5 @@
 import type { Item } from "../types";
-import { lesson } from "./build";
+import { lesson } from "./build.js";
 
 export const l07: Item[] = [
   lesson("Lecture 7 · Performance", "Performance tuning", "From SQL to execution plan to tuning", "APPLICATION", 7,

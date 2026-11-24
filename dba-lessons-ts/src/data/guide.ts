@@ -1,5 +1,5 @@
 import type { Item } from "../types";
-import { lesson } from "./build";
+import { lesson } from "./build.js";
 
 const L = "Administrator's Guide";
 export const guide: Item[] = [

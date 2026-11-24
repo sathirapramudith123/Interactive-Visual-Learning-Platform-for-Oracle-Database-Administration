@@ -1,5 +1,4 @@
 import type { Item } from "../types";
-import { dba } from "./dba";
 import { l02 } from "./l02";
 import { l03 } from "./l03";
 import { l04 } from "./l04";
@@ -20,4 +19,4 @@ export const TOPIC = {
 };
 
 // to add a lesson: create it in a data file and list it here
-export const ITEMS: Item[] = [dba, ...l02, ...l03, ...l04, ...l05, ...l06, ...l07, ...l08, ...l09, ...l10, ...l11, ...guide];
+export const ITEMS: Item[] = [...l02, ...l03, ...l04, ...l05, ...l06, ...l07, ...l08, ...l09, ...l10, ...l11, ...guide];

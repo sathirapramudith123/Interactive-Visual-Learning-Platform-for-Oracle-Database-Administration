@@ -1,5 +1,5 @@
 import type { Item } from "../types";
-import { lesson } from "./build";
+import { lesson } from "./build.js";
 
 export const l06: Item[] = [
   lesson("Lecture 6 · Security", "Database security", "Authenticate, authorize, encrypt, audit", "SECURITY", 6,

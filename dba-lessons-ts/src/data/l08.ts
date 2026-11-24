@@ -1,5 +1,5 @@
 import type { Item } from "../types";
-import { lesson } from "./build";
+import { lesson } from "./build.js";
 
 export const l08: Item[] = [
   lesson("Lecture 8 · HA and DR", "High availability and DR", "Primary, standby and failover", "CORE", 8,

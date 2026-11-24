@@ -1,5 +1,5 @@
 import type { Item } from "../types";
-import { lesson } from "./build";
+import { lesson } from "./build.js";
 
 export const l09: Item[] = [
   lesson("Lecture 9 · Vector databases", "Vector databases", "Embeddings and similarity search", "APPLICATION", 9,

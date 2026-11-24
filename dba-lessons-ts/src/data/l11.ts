@@ -1,5 +1,5 @@
 import type { Item } from "../types";
-import { lesson } from "./build";
+import { lesson } from "./build.js";
 
 const L = "Lecture 11 · Logs and recovery";
 export const l11: Item[] = [

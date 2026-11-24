@@ -1,5 +1,5 @@
 import type { Item } from "../types";
-import { lesson } from "./build";
+import { lesson } from "./build.js";
 
 export const l10: Item[] = [
   lesson("Lecture 10 · Database types", "Transactions and CAP", "ACID, locking, CAP and NoSQL", "APPLICATION", 10,

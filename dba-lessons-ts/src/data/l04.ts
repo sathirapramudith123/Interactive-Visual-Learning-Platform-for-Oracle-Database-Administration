@@ -1,5 +1,5 @@
 import type { Item } from "../types";
-import { lesson } from "./build";
+import { lesson } from "./build.js";
 
 const L = "Lecture 4 · Managing the instance";
 export const l04: Item[] = [
