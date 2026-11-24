@@ -24,7 +24,7 @@ export function Header({ theme, onTheme, layers, layer, onLayer, query, onQuery,
       <div className="layers" role="group" aria-label="Filter by lecture">
         <span className="cap">LECTURE</span>
         {layers.map(n => (
-          <button key={n} className={"chip" + (layer === n ? " on" : "")} aria-pressed={layer === n} onClick={() => onLayer(layer === n ? 0 : n)}>{n}</button>
+          <button key={n} className={"chip" + (layer === n ? " on" : "")} aria-pressed={layer === n} onClick={() => onLayer(layer === n ? 0 : n)}>{n === 12 ? "G" : n}</button>
         ))}
       </div>
       <label className="search">

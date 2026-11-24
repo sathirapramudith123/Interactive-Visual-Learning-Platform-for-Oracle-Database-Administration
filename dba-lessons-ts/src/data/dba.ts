@@ -1,77 +1,69 @@
-import type { Item, Packet, PType } from "../types";
+import type { Cat, Item, Kind, NodeDef, Packet, PType, Step } from "../types";
 
-const P = (time: string, src: string, dst: string, proto: string, info: string, size: string, type: PType, label: string, payload: string): Packet =>
-  ({ time, src, dst, proto, info, size, type, label, payload });
+// l laptop, s server, d database, h shield, k disk, c memory chip, f document
+const K: Record<string, Kind> = { l: "laptop", s: "server", d: "db", h: "shield", k: "disk", c: "chip", f: "doc" };
+// node: [id, kind, name, sub, x?, y?]
+export type NT = [string, string, string, string, number?, number?];
+// step: [title, explanation, key idea, new nodes, route "a>b>c", protocol, label, packet type]
+export type ST = [string, string, string, string, string?, string?, string?, PType?];
+interface Opt { e?: [string, string][]; hub?: boolean }
+const SIZES = ["96 B", "140 B", "218 B", "512 B", "1.2 KB", "64 B", "340 B", "720 B"];
 
-export const dba: Item = {
-  id: "dba", name: "What a DBA does", sub: "DBMS, users and the DBA role", cat: "CORE", layer: 1,
-  blurb: "A database administrator keeps the database available, secure, fast and recoverable. Watch how users, applications, the DBMS, the DBA, security and backups work together.",
-  overview: [
-    ["LECTURE", "1 · Introduction"],
-    ["FOCUS", "Keep data available, secure and fast"],
-    ["KEY TASKS", "Install, monitor, secure, back up, tune"],
-    ["TOOLS", "SQL*Plus, Enterprise Manager"],
-    ["SKILLS", "SQL, architecture, problem solving"],
-    ["SOURCE", "IT4040 Lecture 1"],
-  ],
-  nodes: [
-    { id: "users", kind: "laptop", name: "Users", sub: "end users", x: 110, y: 300 },
-    { id: "apps", kind: "server", name: "Applications", sub: "app tier", x: 320, y: 160 },
-    { id: "dbms", kind: "db", name: "DBMS", sub: "Oracle database", x: 540, y: 300 },
-    { id: "dba", kind: "laptop", name: "DBA", sub: "you", x: 320, y: 440 },
-    { id: "sec", kind: "shield", name: "Security", sub: "access, audit", x: 760, y: 160 },
-    { id: "bak", kind: "disk", name: "Backup", sub: "recovery copy", x: 760, y: 440 },
-  ],
-  edges: [["users", "apps"], ["apps", "dbms"], ["dba", "dbms"], ["sec", "apps"], ["sec", "dbms"], ["dbms", "bak"]],
-  steps: [
-    {
-      title: "Users need data", subtitle: "Every system starts with people",
-      explanation: "End users work through applications. They never touch the database files directly.",
-      details: [["WHO", "End users"], ["ACCESS", "Through applications only"], ["GOAL", "Read and change data"]],
-      visibleNodes: ["users"], packets: [],
-    },
-    {
-      title: "Apps talk to the DBMS", subtitle: "Users, applications and the database",
-      explanation: "The application turns a user action into SQL. The DBMS stores and retrieves the data and answers back. It also handles transactions, concurrency and integrity.",
-      details: [["DBMS", "Software that manages the database"], ["LANGUAGE", "SQL"], ["GUARANTEE", "ACID transactions"]],
-      visibleNodes: ["users", "apps", "dbms"], activeEdge: ["apps", "dbms"],
-      packets: [
-        P("0.000s", "users", "apps", "HTTPS", "Place order", "640 B", "req", "HTTP REQUEST", "POST /orders"),
-        P("0.120s", "apps", "dbms", "SQL*Net", "INSERT INTO orders ...", "218 B", "req", "SQL INSERT", "INSERT INTO orders"),
-        P("0.180s", "dbms", "apps", "SQL*Net", "1 row created, COMMIT done", "96 B", "res", "SQL RESULT", "1 row created"),
-        P("0.240s", "apps", "users", "HTTPS", "Order confirmed", "1.2 KB", "res", "HTTP RESPONSE", "200 OK"),
-      ],
-    },
-    {
-      title: "The DBA looks after it", subtitle: "Install, configure, monitor, tune",
-      explanation: "The DBA installs and configures the DBMS, watches performance, and tunes queries and storage. DBAs connect with administrative privileges such as SYSDBA.",
-      details: [["ROLE", "Database administrator"], ["TASKS", "Configure, monitor, optimize"], ["PRIVILEGE", "SYSDBA"]],
-      visibleNodes: ["users", "apps", "dbms", "dba"], activeEdge: ["dba", "dbms"],
-      packets: [
-        P("1.000s", "dba", "dbms", "SYSDBA", "connect / as sysdba", "120 B", "adm", "ADMIN LOGIN", "sysdba"),
-        P("1.100s", "dbms", "dba", "SQL*Net", "Instance OPEN, sessions normal", "180 B", "res", "STATUS", "OPEN"),
-        P("1.250s", "dba", "dbms", "SQL*Net", "Monitor performance, tune slow SQL", "160 B", "adm", "TUNING", "AWR / ADDM"),
-      ],
-    },
-    {
-      title: "Security protects the data", subtitle: "Authenticate, then authorize",
-      explanation: "Before data is returned, the user is authenticated and only the least privilege needed is granted. Encryption and auditing protect and record access.",
-      details: [["PRINCIPLE", "Least privilege"], ["AT REST", "TDE encryption"], ["RECORD", "Auditing"]],
-      visibleNodes: ["users", "apps", "dbms", "dba", "sec"], activeEdge: ["sec", "dbms"],
-      packets: [
-        P("2.000s", "apps", "sec", "AUTH", "Authenticate user (password, MFA)", "240 B", "sec", "AUTHENTICATE", "user + MFA"),
-        P("2.120s", "sec", "dbms", "GRANT", "Allow SELECT only (least privilege)", "150 B", "sec", "AUTHORIZE", "SELECT only"),
-      ],
-    },
-    {
-      title: "Backup and recovery", subtitle: "Plan for the day a disk fails",
-      explanation: "The DBA schedules backups and tests restores. A backup is only real once it has been restored successfully.",
-      details: [["TOOL", "RMAN"], ["TEST", "Restore regularly"], ["GOAL", "Small RPO and RTO"]],
-      visibleNodes: ["users", "apps", "dbms", "dba", "sec", "bak"], activeEdge: ["dbms", "bak"],
-      packets: [
-        P("3.000s", "dbms", "bak", "RMAN", "Full backup copy", "2.4 GB", "bak", "BACKUP", "full backup"),
-        P("3.400s", "bak", "dbms", "RMAN", "Restore after disk failure", "2.4 GB", "bak", "RESTORE", "restore + recover"),
-      ],
-    },
-  ],
-};
+function layout(nodes: NT[], hub: boolean): NodeDef[] {
+  const n = nodes.length, per = n <= 4 ? n : 3;
+  return nodes.map((v, i) => {
+    let x: number, y: number;
+    if (v[4] !== undefined && v[5] !== undefined) { x = v[4]; y = v[5]; }
+    else if (hub) {
+      if (i === 0) { x = 480; y = 300; }
+      else {
+        const a = ((-90 + ((i - 1) * 360) / (n - 1)) * Math.PI) / 180;
+        x = 480 + 330 * Math.cos(a); y = 300 + 190 * Math.sin(a);
+      }
+    } else {
+      const r = Math.floor(i / per), c0 = i % per, c = r % 2 ? per - 1 - c0 : c0;
+      x = 120 + c * 250; y = n <= 4 ? 300 : 170 + r * 210;
+    }
+    return { id: v[0], kind: K[v[1]], name: v[2], sub: v[3], x: Math.round(x), y: Math.round(y) };
+  });
+}
+
+export function lesson(lec: string, name: string, sub: string, cat: Cat, layer: number, nodes: NT[], steps: ST[], opt: Opt = {}): Item {
+  const ns = layout(nodes, !!opt.hub);
+  const nm = (id: string): string => ns.find(x => x.id === id)?.name ?? id;
+  const edges: [string, string][] = opt.e ?? (opt.hub
+    ? ns.slice(1).map(x => [ns[0].id, x.id] as [string, string])
+    : ns.slice(1).map((x, i) => [ns[i].id, x.id] as [string, string]));
+  const seen: string[] = [];
+  let pk = 0;
+  const out: Step[] = steps.map(([title, ex, key, v, route, proto, label, ty], i) => {
+    const add = (id: string): void => { if (id && !seen.includes(id)) seen.push(id); };
+    v.split(" ").forEach(add);
+    const path = route ? route.split(">") : [];
+    path.forEach(add);
+    const lab = (label ?? title).toUpperCase().slice(0, 18);
+    const packets: Packet[] = path.slice(1).map((dst, k) => {
+      const src = path[k];
+      const type: PType = ty ?? (k === 0 ? "req" : "res");
+      return {
+        time: (i + k * 0.12).toFixed(3) + "s", src, dst, proto: proto ?? "SQL", info: `${title}: ${key}`,
+        size: SIZES[pk++ % SIZES.length], type, label: lab, payload: `${nm(src)} > ${nm(dst)}`,
+      };
+    });
+    return {
+      title, subtitle: sub, explanation: ex,
+      details: [["KEY IDEA", key], ["PROTOCOL", proto ?? "-"], ["LECTURE", lec]],
+      visibleNodes: [...seen],
+      activeEdge: path.length > 1 ? ([path[0], path[1]] as [string, string]) : undefined,
+      packets,
+    };
+  });
+  const from = layer === 12 ? "Oracle Database Administrator's Guide 19c" : `IT4040 Lecture ${layer}`;
+  return {
+    id: `${layer}-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+    name, sub: lec, cat, layer,
+    blurb: `${sub}. Press PLAY to watch it step by step, or click a step in the list.`,
+    overview: [["LECTURE", lec], ["TOPIC", sub], ["STEPS", String(steps.length)], ["SOURCE", from]],
+    nodes: ns, edges, steps: out,
+  };
+}

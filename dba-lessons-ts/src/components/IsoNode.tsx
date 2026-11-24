@@ -79,6 +79,26 @@ function Disk() {
     </g>
   );
 }
+// memory chip: flat package with a die on top and pins on two sides
+function Chip() {
+  return (
+    <g>
+      <Box x={-26} y={-26} w={52} d={52} h={7} />
+      <Box x={-13} y={-13} z={7} w={26} d={26} h={4} />
+      {[-17, -7, 3, 13].map(o => <Line key={"a" + o} a={iso(-26, o, 3)} b={iso(-33, o, 3)} />)}
+      {[-17, -7, 3, 13].map(o => <Line key={"b" + o} a={iso(o, 26, 3)} b={iso(o, 33, 3)} />)}
+    </g>
+  );
+}
+// document stack: three sheets with text lines
+function Doc() {
+  return (
+    <g>
+      {[0, 6, 12].map(z => <Box key={z} x={-24} y={-30} z={z} w={48} d={60} h={4} />)}
+      {[-20, -10, 0, 10].map(y => <Line key={y} a={iso(-14, y, 16)} b={iso(14, y, 16)} />)}
+    </g>
+  );
+}
 
 export function IsoNode({ kind, glow }: { kind: Kind; glow: boolean }) {
   return (
@@ -89,6 +109,8 @@ export function IsoNode({ kind, glow }: { kind: Kind; glow: boolean }) {
       {kind === "db" && <Database />}
       {kind === "shield" && <Shield />}
       {kind === "disk" && <Disk />}
+      {kind === "chip" && <Chip />}
+      {kind === "doc" && <Doc />}
     </g>
   );
 }

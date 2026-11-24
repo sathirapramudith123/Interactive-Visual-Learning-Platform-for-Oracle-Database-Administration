@@ -1,5 +1,16 @@
-import type { Cat, Item } from "../types";
+import type { Item } from "../types";
 import { dba } from "./dba";
+import { l02 } from "./l02";
+import { l03 } from "./l03";
+import { l04 } from "./l04";
+import { l05 } from "./l05";
+import { l06 } from "./l06";
+import { l07 } from "./l07";
+import { l08 } from "./l08";
+import { l09 } from "./l09";
+import { l10 } from "./l10";
+import { l11 } from "./l11";
+import { guide } from "./guide";
 
 export const TOPIC = {
   title: "DBA",
@@ -8,18 +19,5 @@ export const TOPIC = {
   credit: "YOUR NAME", // change this to your name
 };
 
-const soon = (id: string, name: string, sub: string, cat: Cat, layer: number, src: string): Item => ({
-  id, name, sub, cat, layer,
-  blurb: "This lesson is not built yet. Add a data file with its nodes and steps, in the same shape as dba.ts.",
-  overview: [["LECTURE", src], ["STATUS", "Coming soon"]],
-  nodes: [], edges: [], steps: [],
-});
-
-export const ITEMS: Item[] = [
-  dba,
-  soon("arch", "Oracle architecture", "Instance, SGA, files", "CORE", 2, "2 · Oracle architecture"),
-  soon("inst", "Installation", "Plan, install, configure", "CORE", 3, "3 · Installation"),
-  soon("net", "Network and listener", "Connect to the database", "APPLICATION", 5, "5 · Network"),
-  soon("secu", "Database security", "Users, privileges, TDE", "SECURITY", 6, "6 · Security"),
-  soon("rec", "Backup and recovery", "Recovery models, log shipping", "CORE", 11, "11 · Recovery"),
-];
+// to add a lesson: create it in a data file and list it here
+export const ITEMS: Item[] = [dba, ...l02, ...l03, ...l04, ...l05, ...l06, ...l07, ...l08, ...l09, ...l10, ...l11, ...guide];

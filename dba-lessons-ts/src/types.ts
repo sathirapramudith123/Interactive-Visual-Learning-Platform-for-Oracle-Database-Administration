@@ -1,4 +1,4 @@
-export type Kind = "laptop" | "server" | "db" | "shield" | "disk";
+export type Kind = "laptop" | "server" | "db" | "shield" | "disk" | "chip" | "doc";
 export type PType = "req" | "res" | "adm" | "sec" | "bak";
 export type Cat = "CORE" | "APPLICATION" | "SECURITY";
 
