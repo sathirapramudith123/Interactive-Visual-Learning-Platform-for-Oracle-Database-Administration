@@ -16,7 +16,7 @@ export default function App() {
   const [layer, setLayer] = useState(0);
   const [query, setQuery] = useState("");
   const [view, setView] = useState<"network" | "sequence">("network");
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light">("light");
   const [showSide, setShowSide] = useState(true);
   const [showFlow, setShowFlow] = useState(true);
   const [overview, setOverview] = useState(true);
