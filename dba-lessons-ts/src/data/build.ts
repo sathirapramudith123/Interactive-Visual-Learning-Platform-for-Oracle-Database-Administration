@@ -5,7 +5,7 @@ const K: Record<string, Kind> = { l: "laptop", s: "server", d: "db", h: "shield"
 // node: [id, kind, name, sub, x?, y?]
 export type NT = [string, string, string, string, number?, number?];
 // step: [title, explanation, key idea, new nodes, route "a>b>c", protocol, label, packet type]
-export type ST = [string, string, string, string, string?, string?, string?, PType?];
+export type ST = [string, string, string, string, string?, string?, string?, PType?, string?];
 interface Opt { e?: [string, string][]; hub?: boolean }
 const SIZES = ["96 B", "140 B", "218 B", "512 B", "1.2 KB", "64 B", "340 B", "720 B"];
 
@@ -39,7 +39,7 @@ export function lesson(lec: string, name: string, sub: string, cat: Cat, layer: 
   const add = (id: string): void => { if (id && !seen.includes(id)) seen.push(id); };
   let pk = 0;
 
-  const out: Step[] = steps.map(([title, ex, key, v, route, proto, label, ty], i) => {
+  const out: Step[] = steps.map(([title, ex, key, v, route, proto, label, ty, code], i) => {
     const before = [...seen];
     const fresh = v.split(" ").filter(x => x && !before.includes(x));
     let paths: string[][] = [];
@@ -69,7 +69,7 @@ export function lesson(lec: string, name: string, sub: string, cat: Cat, layer: 
       };
     }));
     return {
-      title, subtitle: sub, explanation: ex,
+      title, subtitle: sub, explanation: ex, code,
       details: [["KEY IDEA", key], ["PROTOCOL", proto ?? "-"], ["LECTURE", lec]],
       visibleNodes: [...seen],
       activeEdge: paths[0] && paths[0].length > 1 ? ([paths[0][0], paths[0][1]] as [string, string]) : undefined,

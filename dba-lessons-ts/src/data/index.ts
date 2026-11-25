@@ -10,6 +10,8 @@ import { l09 } from "./l09";
 import { l10 } from "./l10";
 import { l11 } from "./l11";
 import { guide } from "./guide";
+import { myLesson } from "./mylesson";
+import { sqlTable } from "./sqltable";
 
 export const TOPIC = {
   title: "DBA",
@@ -19,4 +21,4 @@ export const TOPIC = {
 };
 
 // to add a lesson: create it in a data file and list it here
-export const ITEMS: Item[] = [...l02, ...l03, ...l04, ...l05, ...l06, ...l07, ...l08, ...l09, ...l10, ...l11, ...guide];
+export const ITEMS: Item[] = [...l02, ...l03, ...l04, ...l05, ...l06, ...l07, ...l08, ...l09, ...l10, ...l11, ...guide, ...myLesson, ...sqlTable];

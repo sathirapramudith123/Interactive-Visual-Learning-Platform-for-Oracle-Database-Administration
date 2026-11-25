@@ -122,6 +122,14 @@ table{border-collapse:collapse;width:100%}
 .flow td.inf{white-space:normal}
 .flow tr.latest td{background:var(--accsoft)}
 .flow tbody tr{animation:slide .35s ease-out}
+
+.sql{margin:12px 0;padding:12px 14px;background:var(--accsoft);border:1px solid var(--line);border-radius:12px;overflow:auto;font:12.5px/1.7 ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;white-space:pre}
+.sql code{font:inherit}
+.sq-k{color:var(--acc);font-weight:700}
+.sq-s{color:var(--ok)}
+.sq-n{color:#d97706}
+.sq-c{color:var(--mut);font-style:italic}
+
 @keyframes slide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 .bub{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;color:#fff;font-size:11px;font-weight:700}
 .flow td.none{color:var(--mut);text-align:center;padding:20px}
