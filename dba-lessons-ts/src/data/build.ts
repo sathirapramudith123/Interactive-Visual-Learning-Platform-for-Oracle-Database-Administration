@@ -31,33 +31,52 @@ function layout(nodes: NT[], hub: boolean): NodeDef[] {
 export function lesson(lec: string, name: string, sub: string, cat: Cat, layer: number, nodes: NT[], steps: ST[], opt: Opt = {}): Item {
   const ns = layout(nodes, !!opt.hub);
   const nm = (id: string): string => ns.find(x => x.id === id)?.name ?? id;
-  const edges: [string, string][] = opt.e ?? (opt.hub
+  const edges: [string, string][] = [...(opt.e ?? (opt.hub
     ? ns.slice(1).map(x => [ns[0].id, x.id] as [string, string])
-    : ns.slice(1).map((x, i) => [ns[i].id, x.id] as [string, string]));
+    : ns.slice(1).map((x, i) => [ns[i].id, x.id] as [string, string])))];
+  const has = (a: string, b: string): boolean => edges.some(e => (e[0] === a && e[1] === b) || (e[0] === b && e[1] === a));
   const seen: string[] = [];
+  const add = (id: string): void => { if (id && !seen.includes(id)) seen.push(id); };
   let pk = 0;
+
   const out: Step[] = steps.map(([title, ex, key, v, route, proto, label, ty], i) => {
-    const add = (id: string): void => { if (id && !seen.includes(id)) seen.push(id); };
+    const before = [...seen];
+    const fresh = v.split(" ").filter(x => x && !before.includes(x));
+    let paths: string[][] = [];
+    let auto = false;
+    if (route) paths = [route.split(">")];
+    else {
+      // no route given: connect each new object to the nearest object already on screen
+      auto = true;
+      fresh.forEach(id => {
+        const e = edges.find(q => (q[0] === id && before.includes(q[1])) || (q[1] === id && before.includes(q[0])));
+        if (e) paths.push(e[0] === id ? [id, e[1]] : [e[0], id]);
+      });
+    }
     v.split(" ").forEach(add);
-    const path = route ? route.split(">") : [];
-    path.forEach(add);
+    paths.forEach(p => p.forEach(add));
+    // every hop a packet takes gets a visible line
+    paths.forEach(p => p.slice(1).forEach((b, k) => { if (!has(p[k], b)) edges.push([p[k], b]); }));
+
     const lab = (label ?? title).toUpperCase().slice(0, 18);
-    const packets: Packet[] = path.slice(1).map((dst, k) => {
-      const src = path[k];
-      const type: PType = ty ?? (k === 0 ? "req" : "res");
+    let j = 0;
+    const packets: Packet[] = paths.flatMap(p => p.slice(1).map((dst, k) => {
+      const src = p[k];
+      const type: PType = ty ?? (auto ? "adm" : k === 0 ? "req" : "res");
       return {
-        time: (i + k * 0.12).toFixed(3) + "s", src, dst, proto: proto ?? "SQL", info: `${title}: ${key}`,
+        time: (i + j++ * 0.12).toFixed(3) + "s", src, dst, proto: proto ?? "LINK", info: `${title}: ${key}`,
         size: SIZES[pk++ % SIZES.length], type, label: lab, payload: `${nm(src)} > ${nm(dst)}`,
       };
-    });
+    }));
     return {
       title, subtitle: sub, explanation: ex,
       details: [["KEY IDEA", key], ["PROTOCOL", proto ?? "-"], ["LECTURE", lec]],
       visibleNodes: [...seen],
-      activeEdge: path.length > 1 ? ([path[0], path[1]] as [string, string]) : undefined,
+      activeEdge: paths[0] && paths[0].length > 1 ? ([paths[0][0], paths[0][1]] as [string, string]) : undefined,
       packets,
     };
   });
+
   const from = layer === 12 ? "Oracle Database Administrator's Guide 19c" : `IT4040 Lecture ${layer}`;
   return {
     id: `${layer}-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,

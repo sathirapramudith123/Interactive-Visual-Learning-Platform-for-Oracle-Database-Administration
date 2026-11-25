@@ -4,12 +4,12 @@ import { lesson } from "./build.js";
 const L = "Lecture 2 · Oracle architecture";
 export const l02: Item[] = [
   lesson(L, "Instance vs database", "Memory and processes on one side, files on the other", "CORE", 2,
-    [["u", "l", "Users", "apps"], ["sga", "c", "SGA", "shared memory"], ["bg", "s", "Background", "DBWn LGWR SMON"], ["df", "d", "Data files", "tables, indexes"], ["rl", "f", "Redo logs", "every change"]],
+    [["u", "l", "Users", "apps", 110, 300], ["sga", "c", "SGA", "shared memory", 390, 160], ["bg", "s", "Background", "DBWn LGWR SMON", 390, 440], ["df", "d", "Data files", "tables, indexes", 700, 160], ["rl", "f", "Redo logs", "every change", 700, 440]],
     [
-      ["Two halves", "Oracle is split in two. The instance lives in memory. The database is a set of files on disk.", "Stop the instance and the files are still safe on disk.", "sga bg df rl"],
+      ["Two halves", "Oracle is split in two. The instance lives in memory. The database is a set of files on disk.", "Stop the instance and the files are still safe on disk.", "u sga bg df rl"],
       ["The instance", "The SGA is shared memory. Background processes such as DBWn and LGWR do the work behind the scenes.", "Instance = SGA + background processes.", "", "bg>sga", "INTERNAL", "Background work"],
       ["The database", "Data files hold your tables. Redo log files record every change so nothing is lost.", "Database = files on disk.", "", "bg>rl", "WRITE", "Redo write"],
-      ["A user asks", "A user query reaches the SGA first. If the data is not cached, Oracle reads it from the data files.", "Memory first, disk only when needed.", "u", "u>sga>df>sga>u", "SQL", "Query"],
+      ["A user asks", "A user query reaches the SGA first. If the data is not cached, Oracle reads it from the data files.", "Memory first, disk only when needed.", "", "u>sga>df>sga>u", "SQL", "Query"],
     ], { e: [["u", "sga"], ["sga", "df"], ["bg", "df"], ["bg", "rl"]] }),
 
   lesson(L, "Memory: SGA and PGA", "Shared memory and private memory", "CORE", 2,

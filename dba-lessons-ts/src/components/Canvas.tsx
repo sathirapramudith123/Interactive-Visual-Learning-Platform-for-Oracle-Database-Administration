@@ -17,7 +17,14 @@ export function ends(a: NodeDef, b: NodeDef): [XY, XY] {
 
 export function Edge({ a, b, on, glow }: { a: NodeDef; b: NodeDef; on: boolean; glow: boolean }) {
   const [p, q] = ends(a, b);
-  return <line className={"edge" + (glow ? " glow" : "")} style={{ opacity: on ? 1 : 0 }} x1={p[0]} y1={p[1]} x2={q[0]} y2={q[1]} markerEnd="url(#arr)" />;
+  const mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2;
+  const ang = (Math.atan2(q[1] - p[1], q[0] - p[0]) * 180) / Math.PI;
+  return (
+    <g className={"edgeg" + (glow ? " glow" : "")} style={{ opacity: on ? 1 : 0 }}>
+      <line className="edge" x1={p[0]} y1={p[1]} x2={q[0]} y2={q[1]} />
+      <path className="chev" d="M-8 -7 L8 0 L-8 7 Z" transform={`translate(${mx} ${my}) rotate(${ang})`} />
+    </g>
+  );
 }
 
 export function PacketDot({ from, to, t, type, label, payload }: { from: XY; to: XY; t: number; type: PType; label: string; payload: string }) {

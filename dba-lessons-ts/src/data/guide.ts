@@ -4,12 +4,12 @@ import { lesson } from "./build.js";
 const L = "Administrator's Guide";
 export const guide: Item[] = [
   lesson(L, "Admin accounts", "SYS, SYSTEM and the separation of duties", "SECURITY", 12,
-    [["sys", "d", "SYS", "data dictionary"], ["sm", "s", "SYSTEM", "DBA role"], ["bk", "k", "SYSBACKUP", "RMAN backups"], ["dg", "s", "SYSDG", "Data Guard"], ["km", "h", "SYSKM", "TDE keystore"]],
+    [["dba", "l", "DBA", "you"], ["sys", "d", "SYS", "data dictionary"], ["sm", "s", "SYSTEM", "DBA role"], ["bk", "k", "SYSBACKUP", "RMAN backups"], ["dg", "s", "SYSDG", "Data Guard"], ["km", "h", "SYSKM", "TDE keystore"]],
     [
-      ["SYS", "Created with the database and given all privileges. It owns the base tables and views of the data dictionary, so nobody should modify them or create tables in the SYS schema.", "Normal users should never connect as SYS.", "sys"],
-      ["SYSTEM", "Also created automatically and granted the DBA role. It holds extra tables and views with administrative information. Never store tables for ordinary users in it.", "SYSTEM is for administration only.", "sm"],
+      ["SYS", "Created with the database and given all privileges. It owns the base tables and views of the data dictionary, so nobody should modify them or create tables in the SYS schema.", "Normal users should never connect as SYS.", "dba sys", "dba>sys", "SYSDBA", "Connect as SYS"],
+      ["SYSTEM", "Also created automatically and granted the DBA role. It holds extra tables and views with administrative information. Never store tables for ordinary users in it.", "SYSTEM is for administration only.", "sm", "dba>sm", "DBA ROLE", "Connect as SYSTEM"],
       ["Separation of duties", "SYSBACKUP runs RMAN backup and recovery, SYSDG runs Data Guard operations, and SYSKM manages the Transparent Data Encryption keystore.", "One powerful account is split into smaller jobs.", "bk dg km"],
-    ], { e: [] }),
+    ], { hub: true }),
 
   lesson(L, "DBA authentication", "OS authentication and the password file", "SECURITY", 12,
     [["dba", "l", "DBA", "you", 110, 300], ["os", "h", "OS authentication", "OSDBA group", 420, 170], ["pw", "f", "Password file", "made by ORAPWD", 420, 430], ["db", "d", "Database", "SYSDBA session", 730, 300]],
@@ -50,14 +50,14 @@ export const guide: Item[] = [
     ]),
 
   lesson(L, "Tablespaces", "Why a database uses several tablespaces", "CORE", 12,
-    [["sys", "d", "SYSTEM", "data dictionary"], ["sx", "d", "SYSAUX", "auxiliary data"], ["un", "d", "UNDOTBS1", "undo data"], ["tp", "d", "TEMP", "temporary work"], ["us", "d", "USERS", "application data"]],
+    [["db", "d", "Database", "many tablespaces"], ["sys", "d", "SYSTEM", "data dictionary"], ["sx", "d", "SYSAUX", "auxiliary data"], ["un", "d", "UNDOTBS1", "undo data"], ["tp", "d", "TEMP", "temporary work"], ["us", "d", "USERS", "application data"]],
     [
-      ["Use multiple tablespaces", "Separate user data from dictionary data, keep applications apart, put files on different disks, take one tablespace offline while others stay online, and back up tablespaces one by one.", "More flexibility and better availability.", "sys us"],
-      ["Typical tablespaces", "SYSTEM holds the data dictionary, SYSAUX holds auxiliary data, an undo tablespace holds undo, TEMP holds temporary segments, and USERS or other tablespaces hold application data.", "Each tablespace has its own job.", "sx un tp"],
-      ["Quotas", "A user who creates tables and indexes needs the privilege to create them and a quota (space limit) in the tablespace that will hold them.", "No quota, no space.", ""],
-      ["Offline and read-only", "A tablespace can be taken offline for maintenance, or made read-only so its data cannot change.", "The rest of the database stays available.", ""],
+      ["Use multiple tablespaces", "Separate user data from dictionary data, keep applications apart, put files on different disks, take one tablespace offline while others stay online, and back up tablespaces one by one.", "More flexibility and better availability.", "db"],
+      ["Typical tablespaces", "SYSTEM holds the data dictionary, SYSAUX holds auxiliary data, an undo tablespace holds undo, TEMP holds temporary segments, and USERS or other tablespaces hold application data.", "Each tablespace has its own job.", "sys sx un tp us"],
+      ["Quotas", "A user who creates tables and indexes needs the privilege to create them and a quota (space limit) in the tablespace that will hold them.", "No quota, no space.", "", "db>us", "QUOTA", "Space quota"],
+      ["Offline and read-only", "A tablespace can be taken offline for maintenance, or made read-only so its data cannot change.", "The rest of the database stays available.", "", "db>us", "OFFLINE", "Offline or read-only"],
       ["Kinds of tablespaces", "The guide covers locally managed, bigfile, temporary and encrypted tablespaces, and tablespaces with default compression.", "Locally managed is the normal choice today.", ""],
-    ], { e: [] }),
+    ], { hub: true }),
 
   lesson(L, "Undo", "Rollback, read consistency and flashback", "CORE", 12,
     [["un", "d", "Undo", "before image"], ["up", "l", "UPDATE", "before commit"], ["rb", "s", "ROLLBACK", "undo changes"], ["rc", "c", "Read consistency", "old data for readers"], ["fb", "c", "Flashback", "as of earlier time"]],

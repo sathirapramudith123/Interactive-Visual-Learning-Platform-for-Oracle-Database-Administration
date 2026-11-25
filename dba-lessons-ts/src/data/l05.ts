@@ -14,12 +14,13 @@ export const l05: Item[] = [
     ]),
 
   lesson(L, "Naming methods", "How a name becomes an address", "APPLICATION", 5,
-    [["ez", "s", "Easy Connect", "host:port/service"], ["lo", "f", "tnsnames.ora", "local naming"], ["di", "d", "LDAP directory", "directory naming"], ["ex", "s", "External naming", "non-Oracle service"], ["tp", "l", "tnsping", "tests the listener"]],
+    [["c", "l", "Client", "connect identifier", 110, 300], ["ez", "s", "Easy Connect", "host:port/service", 480, 120], ["lo", "f", "tnsnames.ora", "local naming", 480, 240], ["di", "d", "LDAP directory", "directory naming", 480, 360], ["ex", "s", "External naming", "non-Oracle service", 480, 480], ["l", "s", "Listener", "port 1521", 850, 300]],
     [
-      ["What is a naming method?", "It is the way a client turns a connect identifier into a connect descriptor, which holds the host, port and service name.", "Name in, address out.", "ez lo di ex"],
-      ["Easy Connect", "Enabled by default and needs no client configuration. It supports only TCP/IP and has no failover or load balancing. Example: sqlplus hr/hr@db.us.oracle.com:1521/dba10g", "Quick and simple.", ""],
-      ["Local naming", "The client keeps a tnsnames.ora file. It supports all Oracle Net protocols, connect-time failover, source routing and load balancing.", "The most flexible local option.", ""],
-      ["Directory and external", "Directory naming uses a central LDAP-compliant directory server. External naming uses a supported non-Oracle naming service.", "Central management for many clients.", ""],
-      ["tnsping", "tnsping checks that the client can reach the listener. It does not prove that the requested service is available.", "Listener reachable is not the same as service available.", "tp"],
-    ], { e: [] }),
+      ["What is a naming method?", "It is the way a client turns a connect identifier into a connect descriptor, which holds the host, port and service name.", "Name in, address out.", "c"],
+      ["Easy Connect", "Enabled by default and needs no client configuration. It supports only TCP/IP and has no failover or load balancing. Example: sqlplus hr/hr@db.us.oracle.com:1521/dba10g", "Quick and simple.", "ez l", "c>ez>l", "TCP/IP", "Easy Connect"],
+      ["Local naming", "The client keeps a tnsnames.ora file. It supports all Oracle Net protocols, connect-time failover, source routing and load balancing.", "The most flexible local option.", "lo", "c>lo>l", "TNS", "Local naming"],
+      ["Directory naming", "Directory naming uses a central LDAP-compliant directory server, so many clients share one place for connection details.", "Central management for many clients.", "di", "c>di>l", "LDAP", "Directory lookup"],
+      ["External naming", "External naming uses a supported non-Oracle naming service to resolve the name.", "Use the naming service you already have.", "ex", "c>ex>l", "EXTERNAL", "External naming"],
+      ["tnsping", "tnsping checks that the client can reach the listener. It does not prove that the requested service is available.", "Listener reachable is not the same as service available.", "", "c>l", "TNSPING", "tnsping"],
+    ], { e: [["c", "ez"], ["c", "lo"], ["c", "di"], ["c", "ex"], ["ez", "l"], ["lo", "l"], ["di", "l"], ["ex", "l"]] }),
 ];
