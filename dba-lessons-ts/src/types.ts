@@ -7,7 +7,7 @@ export interface Packet {
   type: PType; label: string; payload: string;
 }
 export interface Step {
-  title: string; subtitle: string; explanation: string;
+  title: string; subtitle: string; explanation: string; code?: string;
   details: [string, string][];
   visibleNodes: string[];
   activeEdge?: [string, string];
